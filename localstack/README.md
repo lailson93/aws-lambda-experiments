@@ -56,3 +56,9 @@ awslocal cloudformation delete-stack --stack-name app-local
 sls info
 sls invoke -f functionName --stage local
 ```
+
+```
+docker-compose up -d
+docker exec -it aws-lambda sh
+https://app.localstack.cloud/dashboard
+```
