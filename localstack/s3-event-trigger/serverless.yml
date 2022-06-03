@@ -1,0 +1,38 @@
+service: aws-python-s3-trigger
+frameworkVersion: ">=2.24.0"
+
+plugins:
+  - serverless-localstack
+
+custom:
+  s3_bucket: replicator-input-101
+  s3_key_base: /
+  s3_bucket_arn: arn:aws:s3:::${self:custom.s3_bucket}
+  s3_role_resource: ${self:custom.s3_bucket_arn}/${self:custom.s3_key_base}/*
+  defaultStage: local
+  profile: default
+  localstack:
+    debug: true
+    stages: [local]
+
+provider:
+  name: aws
+  runtime: python3.8
+  profile: ${opt:profile, self:custom.profile}
+  stage: ${opt:stage, self:custom.defaultStage}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:*
+          Resource: ${self:custom.s3_role_resource}
+
+functions:
+  s3-trigger-function:
+    handler: lambda-function.lambda_handler
+    events:
+      - s3:
+          bucket: ${self:custom.s3_bucket}
+          event: s3:ObjectCreated:*
+          existing: true
