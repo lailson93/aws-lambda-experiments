@@ -35,4 +35,4 @@ functions:
       - s3:
           bucket: ${self:custom.s3_bucket}
           event: s3:ObjectCreated:*
-          existing: true
+#          existing: true
